@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#030a22">
+<title>Rebin: tong sampah pintar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --page:#030a22; --frame:#01040e; --line:rgba(140,180,255,.16); --ink:#eaf1ff; --muted:#8fa3c7;
+  --accent:#8fd9f2; --accent-ink:#04121f; --node:#0b1a3f; --card:rgba(255,255,255,.04);
+  --font:"Manrope",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth;scroll-padding-top:20px}
+body{background:var(--page);color:var(--ink);font:400 16px/1.55 var(--font);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+button,a{font:inherit;color:inherit}
+button{border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+a{text-decoration:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+svg.i{width:1em;height:1em;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+
+/* ===== HERO (bingkai seperti referensi) ===== */
+.topbar{max-width:1280px;margin:0 auto;padding:26px 28px 0;display:flex;justify-content:space-between;font-size:14px;color:var(--ink)}
+.topbar span{display:flex;align-items:center;gap:8px}
+.frame{position:relative;max-width:1280px;margin:36px auto 0;border-radius:48px;border:1px solid var(--line);padding:14px;background:rgba(255,255,255,.01)}
+.hero{position:relative;overflow:hidden;border-radius:36px;background:var(--frame);min-height:min(900px,100svh - 40px);min-height:760px;display:flex;flex-direction:column;align-items:center;padding:34px 20px 0;isolation:isolate}
+/* cahaya busur di belakang */
+.glow{position:absolute;z-index:-1;border-radius:50%;pointer-events:none}
+.g1{width:1150px;height:1150px;right:-420px;top:90px;border:110px solid rgba(110,160,215,.55);filter:blur(44px);-webkit-mask-image:linear-gradient(to left,#000 25%,transparent 75%);mask-image:linear-gradient(to left,#000 25%,transparent 75%)}
+.g2{width:760px;height:760px;left:50%;margin-left:-380px;bottom:-470px;background:rgba(120,200,240,.30);filter:blur(90px)}
+.g3{width:560px;height:560px;left:-160px;top:-260px;border:70px solid rgba(80,130,200,.35);filter:blur(50px)}
+
+.nav{display:flex;align-items:center;gap:30px;padding:9px 10px 9px 22px;border-radius:999px;background:rgba(18,30,62,.55);border:1px solid rgba(160,190,255,.10);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+.brand{display:flex;align-items:center;gap:9px;font-weight:600;font-size:17px}
+.brand .i{font-size:20px;color:var(--accent)}
+.links{display:flex;gap:30px;font-size:12.5px;color:#b9c8e6}
+.links a{position:relative;padding:8px 0}
+.links a:hover{color:#fff}
+.links a.on::after{content:"";position:absolute;left:50%;bottom:-6px;width:34px;height:3px;margin-left:-17px;border-radius:3px;background:var(--accent);filter:blur(2px)}
+.navbtn{display:flex;gap:6px;margin-left:8px}
+.pillbtn{font-size:12px;font-weight:600;padding:11px 18px;border-radius:999px;background:#0a1230;border:1px solid rgba(160,190,255,.12)}
+.pillbtn.solid{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+
+.badge{margin-top:58px;display:inline-flex;align-items:center;gap:9px;padding:9px 18px;border-radius:999px;background:rgba(20,32,64,.6);border:1px solid rgba(160,190,255,.10);font-size:13px;color:#cfdcf5}
+.badge .i{font-size:16px;color:#fff;fill:#fff;stroke:none}
+h1{margin-top:30px;text-align:center;font-weight:500;font-size:clamp(30px,7vw,88px);line-height:.98;letter-spacing:-.045em;
+  background:linear-gradient(180deg,#8fa2c4 0%,#c4d1ea 55%,#e4ebf8 100%);-webkit-background-clip:text;background-clip:text;color:transparent;max-width:1100px;padding-bottom:.12em}
+.sub{margin-top:26px;text-align:center;color:#a9b8d6;font-size:clamp(14px,1.6vw,18px);max-width:520px;font-weight:300}
+.cta{margin-top:32px;display:inline-flex;align-items:center;gap:14px;padding:8px 24px 8px 8px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-weight:600;font-size:14px;transition:transform .15s}
+.cta:active{transform:scale(.97)}
+.cta .dotc{width:36px;height:36px;border-radius:50%;background:#fff;display:grid;place-items:center}
+.cta .dotc .i{font-size:16px;fill:var(--accent-ink);stroke:none}
+
+/* deretan ikon fitur */
+.orbit-wrap{margin-top:auto;width:100%;padding-top:54px}
+.orbit{display:flex;align-items:center;justify-content:center;gap:22px;overflow:hidden;padding:60px 0;margin:-52px 0;
+  -webkit-mask-image:linear-gradient(to right,transparent 0,#000 12%,#000 88%,transparent 100%);mask-image:linear-gradient(to right,transparent 0,#000 12%,#000 88%,transparent 100%)}
+.node{flex:none;width:86px;height:86px;border-radius:50%;background:rgba(14,30,72,.78);border:1px solid rgba(140,180,255,.14);display:grid;place-items:center;font-size:28px;color:#7fb8e6;transition:border-color .15s,color .15s,transform .15s}
+.node:hover,.node:focus-visible,.node[aria-pressed=true]{border-color:rgba(143,217,242,.7);color:#fff}
+.core{width:138px;height:138px;border-color:rgba(160,210,255,.4);background:rgba(20,50,100,.45);position:relative;margin:0 26px;color:#fff;font-size:64px;box-shadow:0 0 70px rgba(120,200,240,.35)}
+.core .i{fill:#bff0ff;stroke:none;filter:drop-shadow(0 0 14px #7fd3ff)}
+.core::before,.core::after{content:"";position:absolute;top:50%;width:10px;height:10px;margin-top:-5px;border-radius:50%;background:#5fb4ea}
+.core::before{left:-24px}.core::after{right:-24px}
+.cap{text-align:center;color:#a9b8d6;font-size:14px;min-height:24px;padding:14px 16px 26px}
+.cap b{color:#fff;font-weight:600}
+
+/* ===== SECTION UMUM ===== */
+.sec{max-width:1120px;margin:0 auto;padding:110px 22px 0}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--accent);letter-spacing:.04em}
+.sec h2{margin-top:14px;font-weight:500;font-size:clamp(30px,4.6vw,52px);line-height:1.05;letter-spacing:-.035em;color:#e4ebf8}
+.sec .lead{margin-top:14px;color:#a9b8d6;max-width:560px;font-weight:300}
+.card{background:var(--card);border:1px solid var(--line);border-radius:28px;-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+.steps{margin-top:36px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.step{padding:24px}
+.step .n{width:42px;height:42px;border-radius:50%;background:var(--node);border:1px solid var(--line);display:grid;place-items:center;color:var(--accent);font-size:20px}
+.step .art{aspect-ratio:240/150;border-radius:18px;border:1px solid var(--line);margin-bottom:20px;overflow:hidden;background:radial-gradient(120% 90% at 50% 0%,rgba(95,180,234,.2),transparent 70%),var(--frame)}
+.step .art svg{display:block;width:100%;height:100%}
+@keyframes pulse{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes turn{to{transform:rotate(360deg)}}
+.anim.wave{animation:pulse 2.4s ease-in-out infinite}.anim.w2{animation-delay:.3s}.anim.w3{animation-delay:.6s}
+.anim.spin4{animation:turn 9s linear infinite}
+.step h3{margin-top:18px;font-size:17px;font-weight:600;letter-spacing:-.01em}
+.step p{margin-top:6px;color:#a9b8d6;font-size:14px}
+
+/* ===== DEMO ===== */
+.demohead{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.status{font-size:13px;padding:8px 14px;border-radius:999px;border:1px solid var(--line);color:#cfdcf5;white-space:nowrap}
+.status i{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--accent);margin-right:8px}
+.demo{margin-top:30px}
+.start{padding:34px 22px;display:grid;gap:16px;justify-items:center;text-align:center}
+.start h3{font-size:24px;font-weight:500;letter-spacing:-.02em}
+.auto{width:100%;max-width:520px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 18px;border-radius:20px;background:rgba(255,255,255,.04);border:1px solid var(--line);text-align:left}
+.auto small{display:block;color:var(--muted)}
+.switch{width:52px;height:30px;border-radius:999px;background:#1a2a55;position:relative;flex:none;transition:background .15s}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:transform .15s}
+.switch[aria-checked=true]{background:var(--accent)}
+.switch[aria-checked=true]::after{transform:translateX(22px)}
+.tip{color:var(--muted);font-size:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 26px;border-radius:999px;font-weight:600;font-size:15px;min-height:48px;transition:transform .12s}
+.btn:active{transform:scale(.97)}
+.btn-main{background:var(--accent);color:var(--accent-ink)}
+.btn-ghost{background:#0a1230;border:1px solid var(--line);color:#fff}
+.btn[disabled]{opacity:.45;pointer-events:none}
+.btn-lg{padding:16px 34px;font-size:16px}
+.grid{display:grid;gap:16px}
+@media(min-width:900px){.grid.two{grid-template-columns:5fr 7fr;align-items:start}}
+.pad{padding:22px}
+.thumb{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:20px;background:var(--node);display:block}
+.item-head{display:flex;gap:14px;align-items:center;margin-top:18px}
+.item-head h3{font-size:22px;line-height:1.2;letter-spacing:-.015em;font-weight:600}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:9px}
+.chip{font-size:12.5px;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--line);font-weight:500;color:#d6e2f8}
+.chip.c-langka{background:#fff;color:#04121f;border-color:#fff}
+.chip.c-epik{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.gauge{position:relative;width:84px;height:84px;flex:none}
+.gauge svg{width:84px;height:84px;transform:rotate(-90deg)}
+.gauge b{position:absolute;inset:0;display:grid;place-items:center;font-size:24px;font-weight:500}
+.gauge small{position:absolute;left:-6px;right:-6px;bottom:-18px;text-align:center;font-size:11px;color:var(--muted)}
+.note{margin-top:28px;padding:12px 14px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid var(--line);font-size:14px;color:#b9c8e6}
+.idea h3{font-size:clamp(26px,4vw,36px);line-height:1.1;letter-spacing:-.03em;font-weight:500;margin-top:14px}
+.ideaimg{position:relative;margin:0 0 16px;border-radius:20px;overflow:hidden;border:1px solid var(--line);aspect-ratio:4/3;background:var(--node)}
+.ideaimg:empty{display:none}
+.ideaimg .cr{position:absolute;left:0;right:0;bottom:0;padding:22px 14px 9px;font-size:11px;color:#dbe7ff;background:linear-gradient(transparent,rgba(1,4,14,.88))}
+.ideaimg img{display:block;width:100%;height:100%;object-fit:cover}
+.ideaimg .ph{height:100%;display:grid;place-items:center;color:var(--muted);font-size:13px;background:linear-gradient(110deg,transparent 30%,rgba(143,217,242,.1) 50%,transparent 70%) 0 0/200% 100%;animation:shine 1.6s linear infinite}
+@keyframes shine{to{background-position:-200% 0}}
+.idea .lead2{color:#a9b8d6;margin-top:8px;font-weight:300}
+.meta{display:flex;gap:26px;margin-top:16px;font-weight:600}
+.meta span{color:var(--muted);font-weight:400;font-size:13px;display:block}
+.blk{margin-top:20px}
+.blk h4{font-size:12px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);font-weight:600;margin-bottom:9px}
+.blk ol{padding-left:22px;display:grid;gap:8px}
+.blk li::marker{color:var(--accent);font-weight:700}
+.tags{display:flex;gap:8px;flex-wrap:wrap}
+.safe{margin-top:20px;padding:12px 14px;border-radius:16px;background:#e4f6fc;color:#04121f;font-size:14px;font-weight:600}
+.fine{font-size:12px;color:var(--muted);margin-top:12px}
+.themes{display:flex;gap:8px;overflow-x:auto;padding:2px 0 6px;scrollbar-width:none}
+.themes::-webkit-scrollbar{display:none}
+.theme{flex:none;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.04);border:1px solid var(--line);font-size:14px;font-weight:500;color:#b9c8e6}
+.theme[aria-pressed=true]{background:#fff;color:#04121f;border-color:#fff}
+.actions{display:flex;gap:10px;align-items:center;margin-top:14px}
+.actions .btn-main{flex:1}
+.icon{width:52px;height:52px;border-radius:50%;padding:0;font-size:22px}
+.count{font-size:13px;color:var(--muted);text-align:center;margin-top:10px}
+.busy{display:grid;place-items:center;padding:70px 10px;color:#a9b8d6;text-align:center;gap:14px}
+.spin{width:34px;height:34px;border-radius:50%;border:3px solid rgba(255,255,255,.15);border-top-color:var(--accent);animation:sp .9s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.fade{animation:fi .25s ease-out}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* ===== PERANGKAT ===== */
+.parts{margin-top:34px;overflow:hidden}
+.part{display:flex;justify-content:space-between;gap:16px;padding:16px 22px;border-top:1px solid var(--line);font-size:15px}
+.part:first-child{border-top:0}
+.part span:last-child{color:#cfdcf5;white-space:nowrap}
+.part small{display:block;color:var(--muted)}
+.part.total{background:rgba(143,217,242,.10);font-weight:600}
+.warnbox{margin-top:16px;color:var(--muted);font-size:13px}
+
+/* ===== KOLEKSI ===== */
+.list{margin-top:30px;display:grid;gap:12px}
+.saved{padding:18px 22px}
+.saved summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.saved summary::-webkit-details-marker{display:none}
+.saved strong{font-size:18px;font-weight:600}
+.saved small{color:var(--muted);display:block}
+.empty{text-align:center;color:var(--muted);padding:40px 10px}
+.del{color:var(--muted);font-size:14px;text-decoration:underline;margin-top:12px}
+footer{max-width:1120px;margin:0 auto;padding:90px 22px 50px;color:var(--muted);font-size:13px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.toast{position:fixed;left:50%;top:20px;transform:translateX(-50%);z-index:9;background:#fff;color:#04121f;padding:12px 18px;border-radius:16px;font-weight:600;max-width:90vw;font-size:14px;box-shadow:0 8px 30px rgba(0,0,0,.4)}
+
+@media(max-width:900px){
+  .links{display:none}.nav{gap:14px}
+  .steps{grid-template-columns:1fr 1fr}
+  .frame{margin:20px 10px 0;border-radius:34px;padding:8px}.hero{border-radius:28px}
+  .topbar{padding:18px 20px 0}
+  .badge{margin-top:44px}
+  .node{width:64px;height:64px;font-size:22px}.core{width:104px;height:104px;font-size:48px;margin:0 20px}
+  .orbit{gap:14px}
+  .g1{width:760px;height:760px;right:-380px;border-width:80px}
+}
+@media(max-width:560px){.steps{grid-template-columns:1fr}.navbtn .pillbtn:not(.solid){display:none}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.fade,.spin,.anim{animation:none}.btn,.cta,.switch,.switch::after,.node{transition:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="star" viewBox="0 0 24 24"><path d="M12 1.5C12.8 7.6 16.4 11.2 22.5 12 16.4 12.8 12.8 16.4 12 22.5 11.2 16.4 7.6 12.8 1.5 12 7.6 11.2 11.2 7.6 12 1.5Z"/></symbol>
+  <symbol id="bin" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></symbol>
+  <symbol id="sensor" viewBox="0 0 24 24"><path d="M12 14.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM6.5 8a7 7 0 0 0 0 8M17.5 8a7 7 0 0 1 0 8M3.5 5.5a11 11 0 0 0 0 13M20.5 5.5a11 11 0 0 1 0 13"/></symbol>
+  <symbol id="camera" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></symbol>
+  <symbol id="chip" viewBox="0 0 24 24"><path d="M7 7h10v10H7zM10 10h4v4h-4zM9 3v4M15 3v4M9 17v4M15 17v4M3 9h4M3 15h4M17 9h4M17 15h4"/></symbol>
+  <symbol id="wifi" viewBox="0 0 24 24"><path d="M2 9a15 15 0 0 1 20 0M5 12.5a10 10 0 0 1 14 0M8.5 16a5 5 0 0 1 7 0M12 19.5v.01"/></symbol>
+  <symbol id="monitor" viewBox="0 0 24 24"><path d="M3 5h18v11H3zM8 20h8M12 16v4"/></symbol>
+  <symbol id="dice" viewBox="0 0 24 24"><path d="M5 5h14v14H5zM9 9v.01M15 9v.01M12 12v.01M9 15v.01M15 15v.01"/></symbol>
+  <symbol id="bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/></symbol>
+  <symbol id="shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></symbol>
+  <symbol id="mark" viewBox="0 0 24 24"><path d="M7 4h10v17l-5-4-5 4z"/></symbol>
+  <symbol id="leaf" viewBox="0 0 24 24"><path d="M5 19c0-9 5-14 14-14 0 9-5 14-14 14zM5 19c3-4 6-7 10-9"/></symbol>
+  <symbol id="cycle" viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3M18 3v4h-4M6 21v-4h4"/></symbol>
+</svg>
+
+<div class="topbar"><span><svg class="i"><use href="#mark"/></svg>PROTOTIPE LOMBA FIKSI 2027</span><span>TIM REBIN<svg class="i"><use href="#leaf"/></svg></span></div>
+
+<div class="frame" id="beranda">
+  <section class="hero">
+    <div class="glow g1"></div><div class="glow g2"></div><div class="glow g3"></div>
+
+    <nav class="nav" aria-label="Menu utama">
+      <a class="brand" href="#beranda"><svg class="i"><use href="#bin"/></svg>Rebin</a>
+      <div class="links"><a class="on" href="#beranda">Beranda</a><a href="#cara">Cara kerja</a><a href="#demo">Demo AI</a><a href="#perangkat">Perangkat</a><a href="#koleksi">Koleksi</a></div>
+      <div class="navbtn"><a class="pillbtn" href="#perangkat">Biaya</a><a class="pillbtn solid" href="#demo">Coba demo</a></div>
+    </nav>
+
+    <div class="badge"><svg class="i"><use href="#star"/></svg>Sensor + kamera + AI dalam satu tong</div>
+    <h1>Tong sampah pintar<br>yang kasih ide baru</h1>
+    <p class="sub">Masukkan benda, kamera mengenalinya, AI memberi ide pemakaian ulang. Kurang cocok? Reroll sampai ketemu yang kamu mau.</p>
+    <a class="cta" href="#demo"><span class="dotc"><svg class="i"><use href="#star"/></svg></span>Coba demo</a>
+
+    <div class="orbit-wrap">
+      <div class="orbit" id="orbit"></div>
+      <p class="cap" id="cap" aria-live="polite"></p>
+    </div>
+  </section>
+</div>
+
+<section class="sec" id="cara">
+  <span class="eyebrow"><svg class="i"><use href="#star"/></svg>Cara kerja</span>
+  <h2>Dari tong ke ide dalam beberapa detik</h2>
+  <p class="lead">Semua berjalan lewat Wi-Fi lokal. Laptop menjalankan website Rebin dan memanggil AI.</p>
+  <div class="steps">
+    <div class="card step"><div class="art"><svg viewBox="0 0 240 150" role="img" aria-label="Ilustrasi sensor ultrasonik di tutup tong yang mendeteksi botol di dalam tong" fill="none" stroke="#8fd9f2" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+<path d="M56 26 L66 134 H174 L184 26" stroke="#7fb8e6"/>
+<rect x="46" y="14" width="148" height="12" rx="6" fill="#0f2250"/>
+<rect x="94" y="26" width="52" height="18" rx="3" fill="#12285a"/>
+<circle cx="107" cy="35" r="6.5" fill="#0f2250"/><circle cx="107" cy="35" r="2.5" fill="#8fd9f2" stroke="none"/>
+<circle cx="133" cy="35" r="6.5" fill="#0f2250"/><circle cx="133" cy="35" r="2.5" fill="#8fd9f2" stroke="none"/>
+<g class="anim wave"><path d="M104 54 Q120 63 136 54"/></g>
+<g class="anim wave w2"><path d="M96 63 Q120 77 144 63"/></g>
+<g class="anim wave w3"><path d="M88 72 Q120 91 152 72"/></g>
+<path d="M114 90 h12 v6 l6 8 v22 a4 4 0 0 1 -4 4 h-16 a4 4 0 0 1 -4 -4 v-22 l6 -8z" fill="rgba(143,217,242,.16)"/>
+<path d="M110 112 h20" stroke="#7fb8e6" opacity=".6"/>
+<path d="M164 46 V100 M160 46 h8 M160 100 h8" stroke="#7fb8e6" stroke-dasharray="3 4" opacity=".7"/>
+<path d="M36 134 H204" stroke="#7fb8e6" opacity=".5"/></svg></div><div class="n"><svg class="i"><use href="#sensor"/></svg></div><h3>1. Benda terdeteksi</h3><p>Sensor ultrasonik HC-SR04 membaca ada benda yang mendekat atau masuk.</p></div>
+    <div class="card step"><div class="art"><svg viewBox="0 0 240 150" role="img" aria-label="Ilustrasi ESP32-CAM memotret dan mengirim foto lewat Wi-Fi ke laptop" fill="none" stroke="#8fd9f2" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+<rect x="16" y="38" width="100" height="72" rx="8" fill="#12285a"/>
+<circle cx="56" cy="70" r="19" fill="#0f2250"/><circle cx="56" cy="70" r="11"/>
+<circle cx="56" cy="70" r="4.5" fill="#8fd9f2" stroke="none"/><circle cx="51" cy="65" r="1.6" fill="#fff" stroke="none"/>
+<rect x="88" y="52" width="18" height="18" rx="2" fill="#0f2250"/><path d="M93 57h8v8h-8z" stroke="#7fb8e6"/>
+<circle cx="97" cy="92" r="3.2" fill="#8fd9f2" stroke="none"/>
+<path d="M26 110v7M38 110v7M50 110v7M62 110v7M74 110v7M86 110v7M98 110v7M108 110v7" stroke="#7fb8e6"/>
+<g class="anim wave"><path d="M128 63 Q137 75 128 87"/></g>
+<g class="anim wave w2"><path d="M138 55 Q152 75 138 95"/></g>
+<g class="anim wave w3"><path d="M148 47 Q167 75 148 103"/></g>
+<rect x="178" y="48" width="50" height="34" rx="4" fill="#0f2250"/>
+<path d="M170 90 H236 L232 96 H174z" fill="#12285a"/>
+<path d="M184 76 l9 -11 l7 8 l5 -5 l12 8z" stroke="#7fb8e6" fill="rgba(143,217,242,.14)"/><circle cx="214" cy="58" r="2.4" fill="#8fd9f2" stroke="none"/></svg></div><div class="n"><svg class="i"><use href="#camera"/></svg></div><h3>2. Kamera memotret</h3><p>ESP32-CAM mengambil gambar benda lalu mengirimnya lewat Wi-Fi.</p></div>
+    <div class="card step"><div class="art"><svg viewBox="0 0 240 150" role="img" aria-label="Ilustrasi foto benda dianalisis AI menjadi kartu nama benda, jenis pilah, dan ide" fill="none" stroke="#8fd9f2" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+<rect x="14" y="32" width="68" height="86" rx="6" fill="#0f2250"/>
+<path d="M30 52V44h8M66 44h8v8M74 98v8h-8M38 106h-8v-8" stroke="#8fd9f2"/>
+<path d="M45 56 h14 v6 l6 8 v22 a4 4 0 0 1 -4 4 h-18 a4 4 0 0 1 -4 -4 v-22 l6 -8z" fill="rgba(143,217,242,.16)" stroke="#7fb8e6"/>
+<path d="M22 75 H74" stroke="#8fd9f2" stroke-dasharray="3 4" class="anim wave"/>
+<path d="M92 75 H116 M110 68 L117 75 L110 82"/>
+<rect x="126" y="24" width="102" height="102" rx="12" fill="#12285a"/>
+<path transform="translate(136 32) scale(.7)" fill="#8fd9f2" stroke="none" d="M12 1.5C12.8 7.6 16.4 11.2 22.5 12 16.4 12.8 12.8 16.4 12 22.5 11.2 16.4 7.6 12.8 1.5 12 7.6 11.2 11.2 7.6 12 1.5Z"/>
+<rect x="158" y="36" width="56" height="6" rx="3" fill="#8fd9f2" stroke="none"/>
+<rect x="138" y="56" width="42" height="14" rx="7" fill="#0f2250"/><circle cx="148" cy="63" r="2.4" fill="#8fd9f2" stroke="none"/><path d="M155 63h18" stroke="#7fb8e6"/>
+<rect x="184" y="56" width="32" height="14" rx="7" fill="#0f2250"/><path d="M191 63h18" stroke="#7fb8e6"/>
+<path d="M138 86h76M138 98h60M138 110h68" stroke="#7fb8e6" opacity=".55"/></svg></div><div class="n"><svg class="i"><use href="#star"/></svg></div><h3>3. AI mengenali</h3><p>Website mengirim foto ke AI. Hasilnya nama benda, jenis pilah, dan ide guna ulang.</p></div>
+    <div class="card step"><div class="art"><svg viewBox="0 0 240 150" role="img" aria-label="Ilustrasi tumpukan kartu ide guna ulang, dadu, dan panah acak ulang" fill="none" stroke="#8fd9f2" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+<g transform="rotate(-14 110 128)" opacity=".7"><rect x="80" y="30" width="62" height="88" rx="9" fill="#0f2250" stroke="#7fb8e6"/></g>
+<g transform="rotate(14 110 128)" opacity=".7"><rect x="80" y="30" width="62" height="88" rx="9" fill="#0f2250" stroke="#7fb8e6"/></g>
+<rect x="80" y="26" width="62" height="92" rx="9" fill="#12285a"/>
+<path transform="translate(99 36)" d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/>
+<path d="M92 76h38M92 88h28M92 100h34" stroke="#7fb8e6" opacity=".6"/>
+<g class="anim spin4" style="transform-origin:34px 106px"><g transform="translate(16 88) scale(1.5)"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3M18 3v4h-4M6 21v-4h4"/></g></g>
+<g transform="rotate(12 194 104)"><rect x="176" y="86" width="36" height="36" rx="9" fill="#0f2250"/>
+<g fill="#8fd9f2" stroke="none"><circle cx="185" cy="95" r="2.4"/><circle cx="203" cy="95" r="2.4"/><circle cx="194" cy="104" r="2.4"/><circle cx="185" cy="113" r="2.4"/><circle cx="203" cy="113" r="2.4"/></g></g>
+<path transform="translate(184 26) scale(.5)" fill="#8fd9f2" stroke="none" d="M12 1.5C12.8 7.6 16.4 11.2 22.5 12 16.4 12.8 12.8 16.4 12 22.5 11.2 16.4 7.6 12.8 1.5 12 7.6 11.2 11.2 7.6 12 1.5Z"/></svg></div><div class="n"><svg class="i"><use href="#dice"/></svg></div><h3>4. Reroll ide</h3><p>Belum cocok? Acak ide baru dengan tema dan tingkat kelangkaan berbeda.</p></div>
+  </div>
+</section>
+
+<section class="sec" id="demo">
+  <div class="demohead">
+    <div><span class="eyebrow"><svg class="i"><use href="#star"/></svg>Demo AI</span><h2>Coba sekarang</h2></div>
+    <span class="status" id="status"><i></i>Memeriksa…</span>
+  </div>
+  <div class="demo" id="demoView" aria-live="polite"></div>
+</section>
+
+<section class="sec" id="perangkat">
+  <span class="eyebrow"><svg class="i"><use href="#chip"/></svg>Perangkat</span>
+  <h2>Prototipe hemat, komponen murah</h2>
+  <p class="lead">Perkiraan biaya satu prototipe demonstrasi. Harga bisa berubah menurut toko, dan laptop serta tong bekas dari rumah.</p>
+  <div class="card parts">
+    <div class="part"><span>ESP32-CAM + kamera<small>1 unit</small></span><span>Rp70.000 – 100.000</span></div>
+    <div class="part"><span>USB-to-TTL programmer<small>jika belum punya</small></span><span>Rp20.000 – 30.000</span></div>
+    <div class="part"><span>Sensor ultrasonik HC-SR04<small>mendeteksi benda</small></span><span>Rp12.000 – 20.000</span></div>
+    <div class="part"><span>Kabel jumper / breadboard<small>1 set</small></span><span>Rp10.000 – 20.000</span></div>
+    <div class="part"><span>Kabel USB / adaptor 5V<small>jika belum ada</small></span><span>Rp0 – 25.000</span></div>
+    <div class="part"><span>LED + resistor<small>indikator, opsional</small></span><span>Rp3.000 – 8.000</span></div>
+    <div class="part"><span>Tong atau wadah bekas<small>dari rumah</small></span><span>Rp0</span></div>
+    <div class="part total"><span>Total perkiraan</span><span>Rp115.000 – 203.000</span></div>
+  </div>
+  <p class="warnbox">Kemampuan mengenali benda bergantung pada pencahayaan, kamera, dan model AI. Hasil AI adalah saran dan bisa keliru.</p>
+</section>
+
+<section class="sec" id="koleksi">
+  <span class="eyebrow"><svg class="i"><use href="#mark"/></svg>Koleksi</span>
+  <h2>Ide yang kamu simpan</h2>
+  <div class="list" id="koleksiView"></div>
+</section>
+
+<footer><span>Rebin · Lomba FIKSI &amp; OPSI 2027 · SMK Cinta Kasih Tzu Chi</span><span>Prototipe demonstrasi, bukan produk jual</span></footer>
+<input type="file" id="file" accept="image/jpeg,image/png,image/webp" capture="environment" aria-label="Ambil atau pilih foto benda" hidden>
+
+<script>
+/* ---------- deretan ikon ---------- */
+const NODES=[
+ ['cycle','Pilah sampah','Petunjuk jenis sampah untuk setiap benda'],
+ ['bin','Tong Rebin','Wadah bekas yang dipasangi sensor dan kamera'],
+ ['sensor','Sensor ultrasonik','HC-SR04 mendeteksi benda yang masuk'],
+ ['camera','Kamera','ESP32-CAM memotret benda'],
+ ['chip','ESP32-CAM','Mikrokontroler yang mengirim foto lewat Wi-Fi'],
+ ['wifi','Wi-Fi lokal','Foto dikirim ke laptop tanpa hosting atau domain'],
+ ['*','AI Rebin','Mengenali benda dan menyusun ide guna ulang'],
+ ['monitor','Website Rebin','Hasil tampil di laptop atau HP'],
+ ['dice','Reroll','Acak ide baru sampai cocok'],
+ ['bulb','Ide guna ulang','Nama benda, ide, bahan, dan langkah'],
+ ['shield','Catatan aman','Setiap ide memuat peringatan keselamatan'],
+ ['mark','Koleksi','Simpan ide favorit'],
+ ['leaf','Edukasi lingkungan','Cocok untuk sekolah dan bank sampah'],
+];
+const CAP_DEFAULT='<b>AI Rebin</b> · Mengenali benda dan menyusun ide guna ulang';
+(function(){
+  const o=document.getElementById('orbit'),cap=document.getElementById('cap');
+  o.innerHTML=NODES.map(([ic,t,d],i)=>ic==='*'
+    ?`<button class="node core" data-i="${i}" aria-label="${t}: ${d}"><svg class="i"><use href="#star"/></svg></button>`
+    :`<button class="node" data-i="${i}" aria-label="${t}: ${d}"><svg class="i"><use href="#${ic}"/></svg></button>`).join('');
+  const show=i=>{const n=NODES[i];cap.innerHTML=`<b>${n[1]}</b> · ${n[2]}`};
+  o.querySelectorAll('.node').forEach(b=>{
+    const i=+b.dataset.i;
+    b.onmouseenter=b.onfocus=b.onclick=()=>show(i);
+    b.onmouseleave=()=>{cap.innerHTML=CAP_DEFAULT};
+  });
+  cap.innerHTML=CAP_DEFAULT;
+  const sections=['beranda','cara','demo','perangkat','koleksi'];
+  addEventListener('scroll',()=>{
+    let cur='beranda';sections.forEach(s=>{const e=document.getElementById(s);if(e&&e.getBoundingClientRect().top<innerHeight*.4)cur=s});
+    document.querySelectorAll('.links a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+cur));
+  },{passive:true});
+})();
+
+/* ---------- aplikasi ---------- */
+const THEMES=[['acak','Acak'],['rumah','Berguna di rumah'],['dekor','Dekorasi'],['mainan','Mainan & belajar'],['tanaman','Tanaman & taman'],['organizer','Penyimpan']];
+const THEME_NAME=Object.fromEntries(THEMES);
+const S={imgOn:false,imgs:{},busy:false,item:null,image:null,rolls:[],idx:0,tema:'acak',auto:false,lastEsp:0,saved:[],demo:false};
+try{S.saved=JSON.parse(localStorage.getItem('rebin.saved')||'[]')}catch{}
+const persist=()=>{try{localStorage.setItem('rebin.saved',JSON.stringify(S.saved))}catch{}};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+async function post(url,body){
+  const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok)throw new Error(j.error||'Gagal terhubung ke server');
+  return j;
+}
+function toast(t){
+  document.querySelectorAll('.toast').forEach(e=>e.remove());
+  const d=document.createElement('div');d.className='toast';d.setAttribute('role','status');d.textContent=t;document.body.appendChild(d);
+  setTimeout(()=>d.remove(),3800);
+}
+function shrink(file){
+  return new Promise((resolve,reject)=>{
+    if(!file) return reject(new Error('Pilih foto terlebih dahulu.'));
+    if(file.size>15*1024*1024) return reject(new Error('Ukuran foto maksimal 15 MB.'));
+    const allowed=['image/jpeg','image/png','image/webp'];
+    if(file.type && !allowed.includes(file.type.toLowerCase()))
+      return reject(new Error('Format foto harus JPG, PNG, atau WebP.'));
+
+    const img=new Image();
+    const objectUrl=URL.createObjectURL(file);
+    const cleanup=()=>URL.revokeObjectURL(objectUrl);
+    img.onload=()=>{
+      try{
+        if(!img.naturalWidth||!img.naturalHeight) throw new Error('Foto tidak memiliki ukuran yang valid.');
+        const scale=Math.min(1,1280/Math.max(img.naturalWidth,img.naturalHeight));
+        const canvas=document.createElement('canvas');
+        canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));
+        canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
+        const ctx=canvas.getContext('2d');
+        if(!ctx) throw new Error('Browser tidak bisa memproses foto ini.');
+        ctx.drawImage(img,0,0,canvas.width,canvas.height);
+        const result=canvas.toDataURL('image/jpeg',.84);
+        cleanup();
+        resolve(result);
+      }catch(err){cleanup();reject(err)}
+    };
+    img.onerror=()=>{cleanup();reject(new Error('Foto tidak bisa dibuka. Coba JPG, PNG, atau WebP.'))};
+    img.src=objectUrl;
+  });
+}
+async function analyze(dataUrl){
+  S.busy=true;S.image=dataUrl;S.item=null;S.rolls=[];S.idx=0;render();
+  document.getElementById('demo').scrollIntoView({behavior:'smooth',block:'start'});
+  try{
+    const j=await post('/api/analyze',{image:dataUrl,tema:S.tema});
+    S.item=j.benda;S.rolls=[{ide:j.ide,rarity:j.rarity,tema:j.tema}];S.idx=0;S.demo=!!j.demo;
+    if(!j.benda.terdeteksi)toast('Bendanya kurang jelas. Coba foto lebih dekat dan terang.');
+  }catch(e){toast(e.message);S.image=null}
+  S.busy=false;render();
+  if(S.rolls[0])loadImage(S.rolls[0]);
+}
+async function reroll(){
+  if(S.busy||!S.item)return;
+  S.busy=true;renderActions();
+  try{
+    const j=await post('/api/reroll',{nama:S.item.nama,bahan:S.item.bahan,exclude:S.rolls.map(r=>r.ide.judul),tema:S.tema});
+    S.rolls.push({ide:j.ide,rarity:j.rarity,tema:j.tema});S.idx=S.rolls.length-1;
+  }catch(e){toast(e.message)}
+  S.busy=false;render();
+  loadImage(S.rolls[S.idx]);
+}
+function save(){
+  const r=S.rolls[S.idx];if(!r)return;
+  const i=S.saved.findIndex(x=>x.ide.judul===r.ide.judul);
+  if(i>=0){S.saved.splice(i,1);toast('Dihapus dari koleksi')}
+  else{S.saved.unshift({...r,benda:S.item.nama});toast('Disimpan ke koleksi')}
+  persist();render();
+}
+function reset(){S.item=null;S.image=null;S.rolls=[];S.idx=0;render()}
+
+
+const imgKey=r=>r.ide.judul+'|'+(S.item?S.item.nama:'');
+function imgInner(k){
+  const v=S.imgs[k];
+  if(v==='loading')return '<div class="ph">Menyiapkan gambar…</div>';
+  if(!v||v==='none')return '';
+  const cap=v.kind==='ai'?'Gambar dibuat AI':'Ilustrasi konsep dari AI';
+  return `<img src="${esc(v.src)}" alt="Ilustrasi hasil akhir (dibuat AI)" onerror="this.parentNode.innerHTML=''"><div class="cr">${cap}</div>`;
+}
+function paintImg(k){document.querySelectorAll('.ideaimg').forEach(el=>{if(el.dataset.k===k)el.innerHTML=imgInner(k)})}
+async function loadImage(r){
+  if(!S.imgOn||!S.item)return;
+  const k=imgKey(r);if(S.imgs[k])return;
+  S.imgs[k]='loading';paintImg(k);
+  try{const j=await post('/api/image',{judul:r.ide.judul,ringkas:r.ide.ringkas,nama:S.item.nama});S.imgs[k]=j.image?{src:j.image,kind:j.kind}:'none'}
+  catch{S.imgs[k]='none'}
+  paintImg(k);
+}
+function ideaHTML(r){
+  const d=r.ide,cls=r.rarity==='Epik'?'c-epik':r.rarity==='Langka'?'c-langka':'';
+  return `<div class="idea fade">
+    <div class="ideaimg" data-k="${esc(imgKey(r))}">${imgInner(imgKey(r))}</div>
+    <div class="chips"><span class="chip ${cls}">${esc(r.rarity)}</span><span class="chip">${esc(THEME_NAME[r.tema]||'')}</span></div>
+    <h3>${esc(d.judul)}</h3><p class="lead2">${esc(d.ringkas)}</p>
+    <div class="meta"><div><span>Waktu</span>${esc(d.menit)} menit</div><div><span>Tingkat</span>${esc(d.tingkat)}</div></div>
+    ${d.bahan_tambahan.length?`<div class="blk"><h4>Bahan tambahan</h4><div class="tags">${d.bahan_tambahan.map(b=>`<span class="chip">${esc(b)}</span>`).join('')}</div></div>`:''}
+    <div class="blk"><h4>Langkah</h4><ol>${d.langkah.map(l=>`<li>${esc(l)}</li>`).join('')}</ol></div>
+    ${d.keselamatan?`<div class="safe">${esc(d.keselamatan)}</div>`:''}
+    <p class="fine">Ini saran dari AI dan bisa keliru. Cek dulu sebelum dicoba.</p></div>`;
+}
+function gauge(n){
+  const c=2*Math.PI*36,off=c*(1-n/100);
+  return `<div class="gauge" role="img" aria-label="Keyakinan AI ${n} persen"><svg viewBox="0 0 84 84"><circle cx="42" cy="42" r="36" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="7"/><circle cx="42" cy="42" r="36" fill="none" stroke="#8fd9f2" stroke-width="7" stroke-linecap="round" stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}"/></svg><b>${n}</b><small>Keyakinan AI</small></div>`;
+}
+function actionsHTML(){
+  const saved=S.rolls[S.idx]&&S.saved.some(x=>x.ide.judul===S.rolls[S.idx].ide.judul);
+  return `<div class="themes" role="group" aria-label="Tema ide">${THEMES.map(([k,n])=>`<button class="theme" data-theme="${k}" aria-pressed="${S.tema===k}">${n}</button>`).join('')}</div>
+  <div class="actions">
+    <button class="btn btn-ghost icon" id="prev" aria-label="Ide sebelumnya" ${S.idx<1||S.busy?'disabled':''}>‹</button>
+    <button class="btn btn-main btn-lg" id="roll" ${S.busy?'disabled':''}>${S.busy?'Mengacak…':'Reroll ide'}</button>
+    <button class="btn btn-ghost icon" id="save" aria-label="${saved?'Hapus dari koleksi':'Simpan ide'}" aria-pressed="${!!saved}">${saved?'♥':'♡'}</button>
+  </div>
+  <p class="count">Roll ${S.idx+1} dari ${S.rolls.length}${S.demo?' · mode demo':''}</p>`;
+}
+function renderActions(){const a=$('#actions');if(a){a.innerHTML=actionsHTML();bind()}}
+function scanHTML(){
+  if(S.busy&&!S.item)return `<div class="card busy fade"><div class="spin"></div><div>Memeriksa benda dan mencari ide…</div></div>`;
+  if(S.item){
+    const it=S.item,r=S.rolls[S.idx];
+    return `<div class="grid two fade">
+      <section class="card pad"><img class="thumb" src="${S.image}" alt="Foto benda">
+        <div class="item-head"><div style="flex:1;min-width:0"><h3>${esc(it.nama)}</h3><div class="chips"><span class="chip">${esc(it.bahan)}</span><span class="chip">${esc(it.pilah)}</span></div></div>${gauge(it.yakin)}</div>
+        <div class="note">${it.terdeteksi?'Nama benda ini tebakan AI. Kalau salah, foto ulang lebih dekat.':'Bendanya belum jelas. Coba foto ulang dengan cahaya cukup dan latar polos.'}</div>
+        <div style="margin-top:14px"><button class="btn btn-ghost" id="again">Scan benda lain</button></div>
+      </section>
+      <section><div class="card pad">${ideaHTML(r)}</div><div id="actions" class="card pad" style="margin-top:16px">${actionsHTML()}</div></section>
+    </div>`;
+  }
+  return `<div class="card start fade"><h3>Foto benda yang mau dibuang</h3>
+    <button class="btn btn-main btn-lg" id="pick">Ambil foto atau pilih gambar</button>
+    <p class="tip">Di HP tombol ini membuka kamera belakang. Cahaya terang dan satu benda membantu hasil analisis.</p></div>`;
+}
+function savedHTML(){
+  if(!S.saved.length)return `<div class="empty card">Belum ada ide tersimpan. Tekan ♡ di ide yang kamu suka.</div>`;
+  return S.saved.map((r,i)=>`<details class="card saved"><summary><div><strong>${esc(r.ide.judul)}</strong><small>dari ${esc(r.benda)} · ${esc(r.rarity)}</small></div><span class="chip">${r.ide.menit} mnt</span></summary>
+    ${ideaHTML(r)}<button class="del" data-del="${i}">Hapus</button></details>`).join('');
+}
+function render(){
+  $('#demoView').innerHTML=scanHTML();$('#koleksiView').innerHTML=savedHTML();bind();
+}
+function bind(){
+  document.querySelectorAll('[data-theme]').forEach(b=>b.onclick=()=>{S.tema=b.dataset.theme;renderActions()});
+  document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{S.saved.splice(+b.dataset.del,1);persist();render()});
+  const g=id=>document.getElementById(id);
+  if(g('pick'))g('pick').onclick=()=>$('#file').click();
+  if(g('again'))g('again').onclick=reset;
+  if(g('roll'))g('roll').onclick=reroll;
+  if(g('save'))g('save').onclick=save;
+  if(g('prev'))g('prev').onclick=()=>{if(S.idx>0){S.idx--;render()}};
+}
+const fileInput=$('#file');
+fileInput.addEventListener('change',async e=>{
+  const f=e.target.files&&e.target.files[0];
+  if(!f){fileInput.value='';return}
+  try{
+    const imageData=await shrink(f);
+    await analyze(imageData);
+  }catch(err){toast(err.message||'Foto gagal diproses.')}
+  finally{fileInput.value=''}
+});
+fetch('/api/status').then(r=>r.json()).then(j=>{
+  S.demo=j.demo;S.imgOn=!!j.image;
+  $('#status').innerHTML=`<i></i>${j.demo?'Mode demo':'AI aktif'}`;
+  $('#status').title=j.demo?'Tambahkan GEMINI_API_KEY di file .env agar foto dianalisis oleh AI.':'Foto akan dianalisis oleh Gemini.';
+}).catch(()=>{$('#status').innerHTML='<i></i>Server tidak terhubung'});
+render();
+</script>
+</body>
+</html>
