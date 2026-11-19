@@ -63,9 +63,3 @@ Opsional: jika billing Google AI aktif, isi `GEMINI_IMAGE_MODEL` di `.env` (mis.
     server.js          server + panggilan Gemini + endpoint ESP32-CAM
     public/index.html  tampilan dan JavaScript browser
     .env               API key milikmu (buat sendiri dari .env.example)
-
-## Catatan
-
-- Jangan bagikan API key atau mengunggah `.env` ke GitHub.
-- Kuota dan biaya penggunaan mengikuti ketentuan akun Google AI Studio yang dipakai.
-- Hasil identifikasi dan ide guna ulang AI bisa keliru. Periksa bahan dan keamanan sebelum mengikuti saran.
